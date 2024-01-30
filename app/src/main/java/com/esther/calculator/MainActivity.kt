@@ -17,18 +17,17 @@ class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = MaterialTheme.colorScheme.background,
                 ) {
                     /*
-                    * C,+/-,%, ÷
-                    * 7, 8, 9, ×
-                    * 4, 5, 6, -
-                    * 1, 2, 3, +
-                    * 0,  , ., =
-                    * */
+                     * C,+/-,%, ÷
+                     * 7, 8, 9, ×
+                     * 4, 5, 6, -
+                     * 1, 2, 3, +
+                     * 0,  , ., =
+                     * */
                 }
             }
         }
     }
-
 }
