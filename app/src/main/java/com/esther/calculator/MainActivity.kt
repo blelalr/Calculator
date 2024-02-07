@@ -18,8 +18,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,10 +39,18 @@ class MainActivity : ComponentActivity() {
                 ) {
                     OrientationSwapper(
                         landscapeContent = {
-                            CounterScreen(Modifier.weight(4f), Modifier.weight(1f), Modifier.weight(4f))
+                            CounterScreen(
+                                Modifier.weight(4f),
+                                Modifier.weight(1f),
+                                Modifier.weight(4f),
+                            )
                         },
                         portraitContent = {
-                            CounterScreen(Modifier.weight(4f), Modifier.weight(1f), Modifier.weight(4f))
+                            CounterScreen(
+                                Modifier.weight(4f),
+                                Modifier.weight(1f),
+                                Modifier.weight(4f),
+                            )
                         },
                     )
                 }
@@ -76,26 +82,20 @@ fun CounterScreen(
     weight2: Modifier,
     weight3: Modifier,
 ) {
-    val viewModel = viewModel<CounterViewModel>()
-    var mainState by remember {
-        mutableStateOf(CounterState())
-    }
-    var secondaryState by remember {
-        mutableStateOf(CounterState())
-    }
+    val counterViewModel = viewModel<CounterViewModel>()
+
     Box(modifier = weight1) {
         Counter(
-            mainState,
+            counterViewModel.stateMap[CounterType.Main] ?: CounterState(),
             onIncreaseCounter = {
-                mainState =
-                    viewModel.onAction(
-                        mainState,
-                        CounterAction.IncreaseCount,
-                    )
+                counterViewModel.onAction(
+                    CounterType.Main,
+                    CounterAction.IncreaseCount,
+                )
             },
             onDecreaseCounter = {
-                viewModel.onAction(
-                    mainState,
+                counterViewModel.onAction(
+                    CounterType.Main,
                     CounterAction.DecreaseCount,
                 )
             },
@@ -108,38 +108,30 @@ fun CounterScreen(
         ) {
             Button(
                 onClick = {
-                    mainState =
-                        viewModel.onAction(
-                            secondaryState,
-                            CounterAction.CopySecondaryToMain,
-                        )
+                    counterViewModel.onAction(
+                        CounterType.Main,
+                        CounterAction.CopySecondaryToMain,
+                    )
                 },
             ) {
                 Text("<-")
             }
             Button(
                 onClick = {
-                    secondaryState =
-                        viewModel.onAction(
-                            mainState,
-                            CounterAction.CopyMainToSecondary,
-                        )
+                    counterViewModel.onAction(
+                        CounterType.Main,
+                        CounterAction.CopyMainToSecondary,
+                    )
                 },
             ) {
                 Text("->")
             }
             Button(
                 onClick = {
-                    mainState =
-                        viewModel.onAction(
-                            mainState,
-                            CounterAction.DeleteCounter,
-                        )
-                    secondaryState =
-                        viewModel.onAction(
-                            secondaryState,
-                            CounterAction.DeleteCounter,
-                        )
+                    counterViewModel.onAction(
+                        CounterType.Main,
+                        CounterAction.DeleteCounter,
+                    )
                 },
             ) {
                 Text("Del")
@@ -148,20 +140,18 @@ fun CounterScreen(
     }
     Box(modifier = weight3) {
         Counter(
-            secondaryState,
+            counterViewModel.stateMap[CounterType.Secondary] ?: CounterState(),
             onIncreaseCounter = {
-                secondaryState =
-                    viewModel.onAction(
-                        secondaryState,
-                        CounterAction.IncreaseCount,
-                    )
+                counterViewModel.onAction(
+                    CounterType.Secondary,
+                    CounterAction.IncreaseCount,
+                )
             },
             onDecreaseCounter = {
-                secondaryState =
-                    viewModel.onAction(
-                        secondaryState,
-                        CounterAction.DecreaseCount,
-                    )
+                counterViewModel.onAction(
+                    CounterType.Secondary,
+                    CounterAction.DecreaseCount,
+                )
             },
         )
     }
