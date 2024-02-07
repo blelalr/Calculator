@@ -18,7 +18,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.esther.calculator.CalculatorAction
 import com.esther.calculator.CalculatorButton
@@ -59,19 +58,19 @@ fun Calculator() {
                         .fillMaxWidth()
                         .height(80.dp),
             ) {
-                val ope =
-                    when (state.operation) {
-                        CalculatorOperation.Add -> "+"
-                        CalculatorOperation.Subtract -> "-"
-                        CalculatorOperation.Multiply -> "×"
-                        CalculatorOperation.Divide -> "÷"
-                        null -> ""
-                    }
-                AutoResizedText(
-                    text = state.number1 + ope + state.number2,
-                    style = MaterialTheme.typography.bodyLarge.copy(fontSize = 80.sp),
-                    color = MaterialTheme.colorScheme.onBackground,
-                )
+//                val ope =
+//                    when (state.operation) {
+//                        CalculatorOperation.Add -> "+"
+//                        CalculatorOperation.Subtract -> "-"
+//                        CalculatorOperation.Multiply -> "×"
+//                        CalculatorOperation.Divide -> "÷"
+//                        null -> ""
+//                    }
+//                AutoResizedText(
+//                    text = state.number1 + ope + state.number2,
+//                    style = MaterialTheme.typography.bodyLarge.copy(fontSize = 80.sp),
+//                    color = MaterialTheme.colorScheme.onBackground,
+//                )
             }
             Row(
                 modifier =
