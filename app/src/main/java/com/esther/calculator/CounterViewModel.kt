@@ -1,56 +1,34 @@
 package com.esther.calculator
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
 class CounterViewModel : ViewModel() {
-    var mainState by mutableStateOf(CounterState())
-    var secondaryState by mutableStateOf(CounterState())
-
-    fun onAction(action: CounterAction) {
-        when (action) {
+    fun onAction(
+        state: CounterState,
+        action: CounterAction,
+    ): CounterState {
+        return when (action) {
             is CounterAction.CopySecondaryToMain -> {
-                mainState = secondaryState
+                state
             }
             is CounterAction.CopyMainToSecondary -> {
-                secondaryState = mainState
+                state
             }
             is CounterAction.DeleteCounter -> {
-                mainState = CounterState()
-                secondaryState = CounterState()
+                CounterState()
             }
             is CounterAction.DecreaseCount -> {
-                val isMain = action.type == CounterType.Main
-                if (isMain) {
-                    mainState = handleDecrease(mainState)
-                } else {
-                    secondaryState = handleDecrease(secondaryState)
-                }
+                state.copy(
+                    number = state.number - 1,
+                    time = state.time + 1,
+                )
             }
             is CounterAction.IncreaseCount -> {
-                val isMain = action.type == CounterType.Main
-                if (isMain) {
-                    mainState = handleIncrease(mainState)
-                } else {
-                    secondaryState = handleIncrease(secondaryState)
-                }
+                state.copy(
+                    number = state.number + 1,
+                    time = state.time + 1,
+                )
             }
         }
-    }
-
-    private fun handleDecrease(state: CounterState): CounterState {
-        return state.copy(
-            number = state.number - 1,
-            time = state.time + 1,
-        )
-    }
-
-    private fun handleIncrease(state: CounterState): CounterState {
-        return state.copy(
-            number = state.number + 1,
-            time = state.time + 1,
-        )
     }
 }

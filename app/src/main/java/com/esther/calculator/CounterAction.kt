@@ -1,9 +1,9 @@
 package com.esther.calculator
 
 sealed class CounterAction {
-    data class IncreaseCount(val type: CounterType) : CounterAction()
+    object IncreaseCount : CounterAction()
 
-    data class DecreaseCount(val type: CounterType) : CounterAction()
+    object DecreaseCount : CounterAction()
 
     object CopySecondaryToMain : CounterAction()
 
