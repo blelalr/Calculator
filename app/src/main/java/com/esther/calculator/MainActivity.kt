@@ -17,8 +17,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -86,7 +84,7 @@ fun CounterScreen(
 
     Box(modifier = weight1) {
         Counter(
-            counterViewModel.stateMap[CounterType.Main] ?: CounterState(),
+            counterViewModel.main,
             onIncreaseCounter = {
                 counterViewModel.onAction(
                     CounterType.Main,
@@ -119,7 +117,7 @@ fun CounterScreen(
             Button(
                 onClick = {
                     counterViewModel.onAction(
-                        CounterType.Main,
+                        CounterType.Secondary,
                         CounterAction.CopyMainToSecondary,
                     )
                 },
@@ -140,7 +138,7 @@ fun CounterScreen(
     }
     Box(modifier = weight3) {
         Counter(
-            counterViewModel.stateMap[CounterType.Secondary] ?: CounterState(),
+            counterViewModel.secondary,
             onIncreaseCounter = {
                 counterViewModel.onAction(
                     CounterType.Secondary,
