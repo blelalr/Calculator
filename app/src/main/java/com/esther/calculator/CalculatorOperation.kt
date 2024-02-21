@@ -7,12 +7,12 @@ package com.esther.calculator
  * r4 1, 2, 3, +
  * r5 0, ., =
  * */
-sealed class CalculatorOperation {
-    object Add : CalculatorOperation()
+sealed class CalculatorOperation(val symbol: String, val operator: String) {
+    object Add : CalculatorOperation("+", "+")
 
-    object Subtract : CalculatorOperation()
+    object Subtract : CalculatorOperation("-", "-")
 
-    object Multiply : CalculatorOperation()
+    object Multiply : CalculatorOperation("×", "*")
 
-    object Divide : CalculatorOperation()
+    object Divide : CalculatorOperation("÷", "/")
 }
