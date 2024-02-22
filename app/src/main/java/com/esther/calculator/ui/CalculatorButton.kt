@@ -1,4 +1,4 @@
-package com.esther.calculator
+package com.esther.calculator.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -28,7 +28,7 @@ fun CalculatorButton(
     ) {
         Text(
             text = symbol,
-            fontSize = 36.sp,
+            fontSize = 30.sp,
             color = MaterialTheme.colorScheme.onPrimary,
         )
     }

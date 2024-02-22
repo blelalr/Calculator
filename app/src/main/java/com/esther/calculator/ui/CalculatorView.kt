@@ -4,8 +4,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -14,17 +16,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.esther.calculator.CalculatorAction
-import com.esther.calculator.CalculatorButton
 import com.esther.calculator.CalculatorOperation
 import com.esther.calculator.CalculatorViewModel
 
+@ExperimentalLayoutApi
 @Composable
-fun Calculator() {
+fun CalculatorView(isPortrait: Boolean) {
     /*
      * r1 C,+/-,%, ÷
      * r2 7, 8, 9, ×
@@ -33,7 +36,6 @@ fun Calculator() {
      * r5 0, ., =
      * */
     val space = 16.dp
-
     val viewModel = viewModel<CalculatorViewModel>()
     val state = viewModel.state
     val calculatorActions =
@@ -65,31 +67,36 @@ fun Calculator() {
                 .fillMaxSize()
                 .padding(space)
                 .background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.BottomEnd,
     ) {
         Column(
-            modifier =
-                Modifier
-                    .fillMaxHeight()
-                    .align(Alignment.BottomCenter),
-            verticalArrangement = Arrangement.spacedBy(space / 2),
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.End,
         ) {
-            Box(
-                modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.TopEnd,
-            ) {
-                Column {
-                    AutoResizedText(
-                        text = "${state.result}",
-                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 60.sp),
-                        color = MaterialTheme.colorScheme.onBackground,
-                    )
-                    AutoResizedText(
-                        text = "${state.formula}",
-                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 40.sp),
-                        color = MaterialTheme.colorScheme.onBackground,
-                    )
-                }
-            }
+            AutoResizedText(
+                text = "${state.result}",
+                style =
+                    MaterialTheme.typography.bodyLarge.copy(
+                        fontSize =
+                            getFontSize(
+                                true,
+                                isPortrait,
+                            ),
+                    ),
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+            AutoResizedText(
+                text = "${state.formula}",
+                style =
+                    MaterialTheme.typography.bodyLarge.copy(
+                        fontSize =
+                            getFontSize(
+                                true,
+                                isPortrait,
+                            ),
+                    ),
+                color = MaterialTheme.colorScheme.onBackground,
+            )
 
             LazyVerticalGrid(
                 columns = GridCells.Fixed(4),
@@ -98,29 +105,52 @@ fun Calculator() {
             ) {
                 calculatorActions.fastForEachIndexed { i, action ->
                     item(span = {
-                        if (i == 16) {
-                            GridItemSpan(2)
-                        } else {
-                            GridItemSpan(1)
-                        }
+                        GridItemSpan(if (action.symbol == "0") 2 else 1)
                     }) {
+                        val buttonBackgroundColor =
+                            if (i < 3) {
+                                MaterialTheme.colorScheme.tertiary
+                            } else if ((i + 1) % 4 == 0 || action.symbol == "=") {
+                                MaterialTheme.colorScheme.secondary
+                            } else {
+                                MaterialTheme.colorScheme.primary
+                            }
                         CalculatorButton(
                             symbol = action.symbol,
                             modifier =
                                 Modifier
-                                    .background(MaterialTheme.colorScheme.primary),
-//                                    .aspectRatio(
-//                                        if (i == 16) {
-//                                            2.1f
-//                                        } else {
-//                                            1f
-//                                        },
-//                                    )
+                                    .background(buttonBackgroundColor)
+                                    .aspectRatio(getAspectRatio(i, isPortrait)),
                             onClick = { viewModel.onAction(action) },
                         )
                     }
                 }
             }
         }
+    }
+}
+
+fun getAspectRatio(
+    i: Int,
+    isPortrait: Boolean,
+): Float {
+    return if (isPortrait) {
+        if (i == 16) 2.1f else 1f
+    } else {
+        if (i == 16) 3.4f else 1.6f
+    }
+}
+
+fun getFontSize(
+    isResult: Boolean,
+    isPortrait: Boolean,
+): TextUnit {
+    val defaultResultFontSize = 60.sp
+    val defaultFormulaFontSize = 40.sp
+
+    return if (isPortrait) {
+        if (isResult) defaultResultFontSize else defaultFormulaFontSize
+    } else {
+        if (isResult) defaultResultFontSize / 2 else defaultFormulaFontSize / 2
     }
 }

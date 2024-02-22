@@ -4,19 +4,21 @@ import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import com.esther.calculator.ui.Calculator
+import com.esther.calculator.ui.CalculatorView
 import com.esther.calculator.ui.theme.CalculatorTheme
-import com.github.jairrab.calc.CalculatorButton
 
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalLayoutApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -26,23 +28,23 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
-                    val configuration = LocalConfiguration.current
-                    if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    val orientation = LocalConfiguration.current.orientation
+
+                    if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+                        // portrait mode
+                        CalculatorView(true)
+                    } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
                         // landscape mode
-                        val buttons = listOf<CalculatorButton>()
                         Row {
                             Box(modifier = Modifier.weight(4f)) {
-                                Calculator()
+                                CalculatorView(false)
                             }
                             Box(modifier = Modifier.weight(1f))
 
                             Box(modifier = Modifier.weight(4f)) {
-                                Calculator()
+                                CalculatorView(false)
                             }
                         }
-                    } else if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-                        // portrait mode
-                        Calculator()
                     }
                 }
             }
