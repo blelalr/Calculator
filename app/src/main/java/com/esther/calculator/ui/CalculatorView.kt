@@ -74,7 +74,7 @@ fun CalculatorView(isPortrait: Boolean) {
             horizontalAlignment = Alignment.End,
         ) {
             AutoResizedText(
-                text = "${state.result}",
+                text = state.result,
                 style =
                     MaterialTheme.typography.bodyLarge.copy(
                         fontSize =
@@ -86,7 +86,7 @@ fun CalculatorView(isPortrait: Boolean) {
                 color = MaterialTheme.colorScheme.onBackground,
             )
             AutoResizedText(
-                text = "${state.formula}",
+                text = state.formula,
                 style =
                     MaterialTheme.typography.bodyLarge.copy(
                         fontSize =
