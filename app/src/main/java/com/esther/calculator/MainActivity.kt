@@ -27,20 +27,19 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background,
                 ) {
                     val orientation = LocalConfiguration.current.orientation
-
                     if (orientation == Configuration.ORIENTATION_PORTRAIT) {
                         // portrait mode
-                        CalculatorView(true)
+                        CalculatorView(isPortrait = true, isMain = true)
                     } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
                         // landscape mode
                         Row {
                             Box(modifier = Modifier.weight(4f)) {
-                                CalculatorView(false)
+                                CalculatorView(isPortrait = false, isMain = true)
                             }
                             Box(modifier = Modifier.weight(1f))
 
                             Box(modifier = Modifier.weight(4f)) {
-                                CalculatorView(false)
+                                CalculatorView(isPortrait = false, isMain = false)
                             }
                         }
                     }

@@ -1,4 +1,4 @@
-package com.esther.calculator
+package com.esther.calculator.data
 
 /*
  * r1 C,+/-,%, ÷

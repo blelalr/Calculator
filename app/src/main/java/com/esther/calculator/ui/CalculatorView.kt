@@ -21,13 +21,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.esther.calculator.CalculatorAction
-import com.esther.calculator.CalculatorOperation
-import com.esther.calculator.CalculatorViewModel
+import com.esther.calculator.data.CalculatorAction
+import com.esther.calculator.data.CalculatorOperation
+import com.esther.calculator.data.CalculatorViewModel
 
 @ExperimentalLayoutApi
 @Composable
-fun CalculatorView(isPortrait: Boolean) {
+fun CalculatorView(
+    isPortrait: Boolean,
+    isMain: Boolean,
+) {
     /*
      * r1 C,+/-,%, ÷
      * r2 7, 8, 9, ×
@@ -37,7 +40,7 @@ fun CalculatorView(isPortrait: Boolean) {
      * */
     val space = 16.dp
     val viewModel = viewModel<CalculatorViewModel>()
-    val state = viewModel.state
+
     val calculatorActions =
         listOf(
             CalculatorAction.Clear,
@@ -74,7 +77,7 @@ fun CalculatorView(isPortrait: Boolean) {
             horizontalAlignment = Alignment.End,
         ) {
             AutoResizedText(
-                text = state.result,
+                text = viewModel.onResult(isMain),
                 style =
                     MaterialTheme.typography.bodyLarge.copy(
                         fontSize =
@@ -86,7 +89,7 @@ fun CalculatorView(isPortrait: Boolean) {
                 color = MaterialTheme.colorScheme.onBackground,
             )
             AutoResizedText(
-                text = state.formula,
+                text = viewModel.onFormula(isMain),
                 style =
                     MaterialTheme.typography.bodyLarge.copy(
                         fontSize =
@@ -121,7 +124,7 @@ fun CalculatorView(isPortrait: Boolean) {
                                 Modifier
                                     .background(buttonBackgroundColor)
                                     .aspectRatio(getAspectRatio(i, isPortrait)),
-                            onClick = { viewModel.onAction(action) },
+                            onClick = { viewModel.onAction(action, isMain) },
                         )
                     }
                 }
