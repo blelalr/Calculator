@@ -29,17 +29,17 @@ class MainActivity : ComponentActivity() {
                     val orientation = LocalConfiguration.current.orientation
                     if (orientation == Configuration.ORIENTATION_PORTRAIT) {
                         // portrait mode
-                        CalculatorView(isPortrait = true, isMain = true)
+                        CalculatorView(isPortrait = true, isPrimary = true)
                     } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
                         // landscape mode
                         Row {
                             Box(modifier = Modifier.weight(4f)) {
-                                CalculatorView(isPortrait = false, isMain = true)
+                                CalculatorView(isPortrait = false, isPrimary = false)
                             }
                             Box(modifier = Modifier.weight(1f))
 
                             Box(modifier = Modifier.weight(4f)) {
-                                CalculatorView(isPortrait = false, isMain = false)
+                                CalculatorView(isPortrait = false, isPrimary = true)
                             }
                         }
                     }

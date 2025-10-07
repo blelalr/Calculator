@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.esther.calculator.data.CalculatorAction
+import com.esther.calculator.data.CalculatorId
 import com.esther.calculator.data.CalculatorOperation
 import com.esther.calculator.data.CalculatorViewModel
 
@@ -29,7 +30,7 @@ import com.esther.calculator.data.CalculatorViewModel
 @Composable
 fun CalculatorView(
     isPortrait: Boolean,
-    isMain: Boolean,
+    isPrimary: Boolean,
 ) {
     /*
      * r1 C,+/-,%, ÷
@@ -77,7 +78,7 @@ fun CalculatorView(
             horizontalAlignment = Alignment.End,
         ) {
             AutoResizedText(
-                text = viewModel.onResult(isMain),
+                text = viewModel.onResult(if (isPrimary) CalculatorId.Primary else CalculatorId.Secondary),
                 style =
                     MaterialTheme.typography.bodyLarge.copy(
                         fontSize =
@@ -89,7 +90,7 @@ fun CalculatorView(
                 color = MaterialTheme.colorScheme.onBackground,
             )
             AutoResizedText(
-                text = viewModel.onFormula(isMain),
+                text = viewModel.onFormula(if (isPrimary) CalculatorId.Primary else CalculatorId.Secondary),
                 style =
                     MaterialTheme.typography.bodyLarge.copy(
                         fontSize =
@@ -123,8 +124,8 @@ fun CalculatorView(
                             modifier =
                                 Modifier
                                     .background(buttonBackgroundColor)
-                                    .aspectRatio(getAspectRatio(i, isPortrait)),
-                            onClick = { viewModel.onAction(action, isMain) },
+                                    .aspectRatio(getAspectRatio(i, false)),
+                            onClick = { viewModel.onAction(action, isPrimary) },
                         )
                     }
                 }

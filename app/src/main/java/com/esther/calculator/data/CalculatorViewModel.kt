@@ -10,18 +10,26 @@ import com.github.jairrab.calc.CalculatorButton
 import com.github.jairrab.calc.CalculatorUpdate
 import java.text.DecimalFormat
 
-class CalculatorViewModel : ViewModel() {
-    private var mState by mutableStateOf(CalculatorUiState())
-    private val mainCalculator by lazy { buildCalculator(true) }
-    private val secondaryCalculator by lazy { buildCalculator(false) }
+sealed class CalculatorId {
+    object Primary : CalculatorId()
 
-    private fun buildCalculator(isMain: Boolean): Calculator {
+    object Secondary : CalculatorId()
+}
+
+class CalculatorViewModel : ViewModel() {
+    private var mState by mutableStateOf(CalculatorState())
+    private var mSecondaryState by mutableStateOf(CalculatorState())
+
+    private val calculator by lazy { buildCalculator(CalculatorId.Primary) }
+    private val secondaryCalculator by lazy { buildCalculator(CalculatorId.Secondary) }
+
+    private fun buildCalculator(id: CalculatorId): Calculator {
         return CalculatorBuilder().listener { calculatorUpdate ->
             when (calculatorUpdate) {
                 is CalculatorUpdate.OnUpdate -> {
                     if (calculatorUpdate.entries.isNotEmpty()) {
                         updateState(
-                            isMain,
+                            id,
                             CalculatorState(
                                 result =
                                     if (calculatorUpdate.entries.last() == "=") {
@@ -56,48 +64,50 @@ class CalculatorViewModel : ViewModel() {
 
     fun onAction(
         action: CalculatorAction,
-        isMain: Boolean,
+        isPrimary: Boolean,
     ) {
+        val targetCalculator = if (isPrimary) calculator else secondaryCalculator
         when (action) {
-            is CalculatorAction.Number -> enterNumber(action.number, isMain)
+            is CalculatorAction.Number -> enterNumber(action.number, target = targetCalculator)
             is CalculatorAction.Clear -> {
-                getCalculator(isMain).clear()
-                updateState(isMain, CalculatorState())
+                targetCalculator.clear()
+                updateState(id = if (isPrimary) CalculatorId.Primary else CalculatorId.Secondary, CalculatorState())
             }
 
-            is CalculatorAction.Operation -> enterOperation(action.operator, isMain)
-            is CalculatorAction.Decimal -> getCalculator(isMain).pressDecimal()
-            is CalculatorAction.Percentage -> getCalculator(isMain).pressPercent()
-            is CalculatorAction.Sign -> enterSign(isMain)
-            is CalculatorAction.Calculate -> getCalculator(isMain).pressEquals()
+            is CalculatorAction.Operation -> enterOperation(action.operator, target = targetCalculator)
+            is CalculatorAction.Decimal -> targetCalculator.pressDecimal()
+            is CalculatorAction.Percentage -> targetCalculator.pressPercent()
+            is CalculatorAction.Sign ->
+                enterSign(
+                    id = if (isPrimary) CalculatorId.Primary else CalculatorId.Secondary,
+                    target = targetCalculator,
+                )
+            is CalculatorAction.Calculate -> targetCalculator.pressEquals()
         }
     }
 
     private fun updateState(
-        isMain: Boolean,
+        id: CalculatorId,
         calculatorState: CalculatorState,
     ) {
-        mState =
-            if (isMain) {
-                mState.copy(mainState = calculatorState)
-            } else {
-                mState.copy(secondaryState = calculatorState)
-            }
+        when (id) {
+            is CalculatorId.Primary -> mState = calculatorState
+            is CalculatorId.Secondary -> mSecondaryState = calculatorState
+        }
     }
 
-    private fun getCalculator(isMain: Boolean): Calculator {
-        return if (isMain) mainCalculator else secondaryCalculator
-    }
-
-    private fun enterSign(isMain: Boolean) {
-        val value = getCalculator(isMain).getCurrentNumber() * -1
-        getCalculator(isMain)
+    private fun enterSign(
+        target: Calculator,
+        id: CalculatorId,
+    ) {
+        val value = target.getCurrentNumber() * -1
+        target
             .resetToNumber(
                 number = value,
                 readyToClear = false,
             )
         updateState(
-            isMain,
+            id,
             CalculatorState(
                 formula = value.toDollarExpression(false),
             ),
@@ -106,30 +116,36 @@ class CalculatorViewModel : ViewModel() {
 
     private fun enterOperation(
         operation: CalculatorOperation,
-        isMain: Boolean,
+        target: Calculator,
     ) {
         when (operation) {
-            CalculatorOperation.Add -> getCalculator(isMain).pressPlus()
-            CalculatorOperation.Divide -> getCalculator(isMain).pressDivide()
-            CalculatorOperation.Multiply -> getCalculator(isMain).pressMultiply()
-            CalculatorOperation.Subtract -> getCalculator(isMain).pressMinus()
+            CalculatorOperation.Add -> target.pressPlus()
+            CalculatorOperation.Divide -> target.pressDivide()
+            CalculatorOperation.Multiply -> target.pressMultiply()
+            CalculatorOperation.Subtract -> target.pressMinus()
         }
     }
 
     private fun enterNumber(
         number: Int,
-        isMain: Boolean,
+        target: Calculator,
     ) {
         CalculatorButton.values().map {
-            if (it.tag == number.toString()) getCalculator(isMain).press(it)
+            if (it.tag == number.toString()) target.press(it)
         }
     }
 
-    fun onResult(isMain: Boolean): String {
-        return if (isMain) mState.mainState.result else mState.secondaryState.result
+    fun onResult(id: CalculatorId): String {
+        return when (id) {
+            is CalculatorId.Primary -> mState.result
+            is CalculatorId.Secondary -> mSecondaryState.result
+        }
     }
 
-    fun onFormula(isMain: Boolean): String {
-        return if (isMain) mState.mainState.formula else mState.secondaryState.formula
+    fun onFormula(id: CalculatorId): String {
+        return when (id) {
+            is CalculatorId.Primary -> mState.formula
+            is CalculatorId.Secondary -> mSecondaryState.formula
+        }
     }
 }
